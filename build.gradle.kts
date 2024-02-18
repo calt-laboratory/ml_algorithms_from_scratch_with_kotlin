@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:dataframe:0.12.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
