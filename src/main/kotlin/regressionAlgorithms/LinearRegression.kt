@@ -33,6 +33,14 @@ class LinearRegression (private var learningRate: Double = 0.001, private var nu
             bias = bias?.minus(learningRate * db)
         }
     }
+
+    fun predict(xData: DataFrame<Any?>) : DoubleArray {
+        val convertedDataFrame = convertDataFrameToDoubleArray(xData)
+        val dotProductResult = dotProduct(matrix = convertedDataFrame, vector = weights)
+        val yPredicted = dotProductResult.map { it + bias!! }.toDoubleArray()
+        println("Predicted values: $yPredicted")
+        return yPredicted
+    }
 }
 
 fun convertDataFrameToDoubleArray(df: DataFrame<Any?>): Array<DoubleArray> {
