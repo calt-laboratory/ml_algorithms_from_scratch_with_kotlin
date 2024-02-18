@@ -5,7 +5,7 @@ import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.rows
 import org.jetbrains.kotlinx.dataframe.size
 
-class LinearRegression (var learningRate: Double = 0.001, var numberOfIterations: Int = 1000) {
+class LinearRegression (private var learningRate: Double = 0.001, private var numberOfIterations: Int = 1000) {
     private var weights: DoubleArray? = null
     private var bias: Double? = null
 
@@ -26,6 +26,11 @@ class LinearRegression (var learningRate: Double = 0.001, var numberOfIterations
             // Gradient descent computation
             val dwArray = dotProduct(matrix = transpose(convertedDataFrame), vector = subtract(yPredicted, yData.toDoubleArray()))
             val dw = dwArray.map { it * (1.0 / nSamples) }.toDoubleArray()
+            val db = (1.0 / nSamples) * subtract(yPredicted, yData.toDoubleArray()).sum()
+
+            // Update parameters (weights and bias)
+            weights = weights?.mapIndexed { idx, weight -> weight - learningRate * dw[idx] }?.toDoubleArray()
+            bias = bias?.minus(learningRate * db)
         }
     }
 }
@@ -53,7 +58,6 @@ fun transpose(matrix: Array<DoubleArray>): Array<DoubleArray> {
     if (matrix.isEmpty()) return arrayOf()
     // Determines the number of columns in the original matrix
     val cols = matrix.first().size
-    // Creates a new matrix where each column of the original matrix becomes a row
     return Array(cols) { col ->
         DoubleArray(matrix.size) { row ->
             matrix[row][col]
@@ -63,7 +67,6 @@ fun transpose(matrix: Array<DoubleArray>): Array<DoubleArray> {
 
 fun subtract(a: DoubleArray, b: DoubleArray): DoubleArray {
     if (a.size != b.size) throw IllegalArgumentException("Arrays must have the same size!")
-    // Creates a new DoubleArray for the result of the subtraction
     return DoubleArray(a.size) { index ->
         a[index] - b[index]
     }
@@ -77,4 +80,3 @@ fun DataColumn<Any?>.toDoubleArray(): DoubleArray {
         }
     }.toDoubleArray()
 }
-
