@@ -6,24 +6,6 @@ import org.jetbrains.kotlinx.dataframe.api.*
 import kotlin.random.Random
 
 
-data class PreProcessedDataset(val df: DataFrame<Any?>, val xData: DataFrame<Any?>, val yData: DataColumn<*>)
-
-/**
- * Removes the id column and maps the diagnosis column to 0 and 1.
- * @param df Original dataframe
- * @return PreProcessedDataset Contains the dataframe, the features and the target
- */
-fun dataPreProcessing(df: DataFrame<*>): PreProcessedDataset {
-    // Remove id column
-    val dfWithoutID = df.remove("id")
-    // Map B (= benign) to 0 and M (= malignant) to 1
-    val updatedDiagnosis = dfWithoutID["diagnosis"].map { if (it == "B") 0 else 1 }
-    val updatedDataFrame = dfWithoutID.replace { it["diagnosis"] }.with { updatedDiagnosis }
-    val yData = updatedDataFrame["diagnosis"]
-    val xData = updatedDataFrame.remove("diagnosis")
-    return PreProcessedDataset(updatedDataFrame, xData, yData)
-}
-
 data class SplitData(
     val xTrain: DataFrame<Any?>,
     val xTest: DataFrame<Any?>,
